@@ -79,7 +79,7 @@ GROUP BY
 ORDER BY total_rentals DESC;
 ```
 
-*To answer the question above, I pull the country data from the country table and aggregate the rental id from the rental table through other tables with the LEFT JOIN function so that the country table is the reference. After that, I grouped the country column and sorted it based on the aggregation column in descending order.*
+*To answer the question above, retrieve the country data from the country table and aggregate the rental id from the rental table through other tables with the LEFT JOIN function so that the country table is the reference. After that, I grouped the country column and sorted it based on the aggregation column in descending order.*
 
 So, with the syntax above, we can find out the names of the countries and the number of movie rentals as follows:
 
@@ -87,6 +87,37 @@ So, with the syntax above, we can find out the names of the countries and the nu
 ![image](https://github.com/user-attachments/assets/61471ec2-244b-4f2e-a2c9-d36d0e3e1708)
 
 *With the syntax above, the names of the countries with the highest number of movie rentals can be found. It is useful for Sakila company to pay attention to the countries with the highest number of movie rentals in order to provide discounts/promos or provide a large number and variety of movies if the company's orientation is to pursue revenue. However, if the company's orientation is to add customers to new countries or those with a small number of rentals, it is better to provide fewer movies so that the company does not suffer losses and keep an eye on the rental trend per month.*
+
+### What is the total number of movies per category and rating?
+```SQL
+SELECT 
+	cate.name AS category, 
+	fil.rating, 
+	COUNT(fil.film_id) AS total_films
+FROM 
+	film fil
+LEFT JOIN 
+	film_category fil_cate ON fil.film_id = fil_cate.film_id
+LEFT JOIN 
+	category cate ON fil_cate.category_id = cate.category_id
+GROUP BY 
+	category, fil.rating
+ORDER BY category;
+```
+
+*To answer the question above, it is necessary to retrieve category name data from the category table, rating from the movie table, and aggregate movie id from the movie table. Join the category and movie tables using LEFT JOIN through the movie_category table. To find out the number per category and rating using grouping to the category and rating columns sorted alphabetically in the category column*
+
+So, with the syntax above, the number of movies based on category and rating can be found as follows:
+
+![image](https://github.com/user-attachments/assets/0e6d2f7f-8971-4022-a0fe-2517d49c38f8)
+![image](https://github.com/user-attachments/assets/a1707ce8-85b8-4f2f-b445-02cc45731881)
+
+
+
+
+
+
+
 
 
 
