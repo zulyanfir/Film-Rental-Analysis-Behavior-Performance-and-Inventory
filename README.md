@@ -2,7 +2,7 @@
 
 This project focuses on Data Retrieval to retrieve information from the Sakila database using **MySQL**. Sakila database is a well-normalized schema that models a DVD rental store, featuring things like movies, actors, movie-actor relationships, and a central inventory table that links movies, stores, and rentals.
 
-In this project, some of the information that will be pulled from the database for analysis purposes are as follows:
+In this project, some of the information that will be retrieved from the database for analysis purposes are as follows:
 1. Customer Rental Behavior and Film Analysis
    - Knowing the renters and how much they rented.
    - Knowing the total number of rentals per country.
@@ -110,7 +110,134 @@ ORDER BY category;
 So, with the syntax above, the number of movies based on category and rating can be found as follows:
 
 ![image](https://github.com/user-attachments/assets/0e6d2f7f-8971-4022-a0fe-2517d49c38f8)
-![image](https://github.com/user-attachments/assets/a1707ce8-85b8-4f2f-b445-02cc45731881)
+![image](https://github.com/user-attachments/assets/b8c8631b-857a-4392-911c-6adccb48416e)
+
+
+### What is the most or least rented movies?
+```SQL
+SELECT 
+	fil.title,
+	cate.name AS category,
+	COUNT(rent.rental_id) AS total_rentals
+FROM 
+	film fil
+LEFT JOIN 
+	inventory inven ON fil.film_id = inven.film_id
+LEFT JOIN 
+	rental rent ON inven.inventory_id = rent.inventory_id
+LEFT JOIN 
+	film_category fil_cate ON fil_cate.film_id = fil.film_id 
+LEFT JOIN
+	category cate ON cate.category_id = fil_cate.category_id
+GROUP BY 
+	fil.title, category
+ORDER BY 
+	total_rentals DESC
+LIMIT 10;
+```
+
+*To answer the question above, it is necessary to retrieve movie title data from the movie table, category name from the category table, and aggregate the rental id from the rental table through the inventory table, and movie_category using LEFT JOIN. Then grouping the aggregation into the title and category columns to find out the number of renters of each movie title and sorted from the highest number of renters.*
+
+So, the 10 movie titles with the most renters are as follows:
+
+![image](https://github.com/user-attachments/assets/f0096859-9c70-4a98-937e-c4b8576bcfd9)
+
+```SQL
+SELECT 
+	fil.title, 
+	cate.name as category,
+	COUNT(rent.rental_id) AS total_rentals
+FROM 
+	film fil
+LEFT JOIN 
+	inventory inven ON fil.film_id = inven.film_id
+LEFT JOIN 
+	rental rent ON inven.inventory_id = rent.inventory_id
+left join 
+	film_category fil_cate ON fil_cate.film_id = fil.film_id 
+left join
+	category cate ON cate.category_id = fil_cate.category_id 
+GROUP BY 
+	fil.title, cate.name
+HAVING total_rentals = 0
+ORDER BY category;
+```
+
+So, we can find out the least number of movies that were not rented at all as follows:
+
+![image](https://github.com/user-attachments/assets/683fd4c9-df70-4ff2-b601-6ed2d5c8adcd)
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+## Movie Popularity and Performance Analysis
+### which movies generate the highest and lowest revenue?
+```SQL
+SELECT 
+	fil.title,
+	cate.name AS category,
+	fil.rating,
+	SUM(pay.amount) AS total_revenue
+FROM 
+	film fil
+LEFT JOIN 
+	inventory inven ON fil.film_id = inven.film_id
+LEFT JOIN 
+	rental rent ON inven.inventory_id = rent.inventory_id
+LEFT JOIN 
+	payment pay ON rent.rental_id = pay.rental_id
+LEFT JOIN  
+	film_category fil_cate ON fil_cate.film_id = fil.film_id 
+LEFT JOIN  
+	category cate ON cate.category_id = fil_cate.category_id 
+GROUP BY 
+	fil.title, category, rating
+ORDER BY 
+	total_revenue DESC
+LIMIT 10;
+```
+
+*Untuk menjawab pertanyaan di atas, diperlukan mengambil data judul dari tabel film dan mengaggregasikan data amount dari tabel payment melalui tabel inventory dan rental dengan LEFT JOIN. Kemudian hasil aggregasi digrouping ke kolom judul dan diurutkan berdasarkan revenue dari yang terbesar.*
+
+Jadi, 10 film yang menghasilkan keuntungan tertinggi sebagai berikut:
+
+![image](https://github.com/user-attachments/assets/c0f0befb-57ca-4127-af8e-fa1d4ae47f41)
+
+
+```SQL
+SELECT 
+	fil.title,
+	cate.name AS category,
+	fil.rating,
+	SUM(pay.amount) AS total_revenue
+FROM 
+	film fil
+LEFT JOIN 
+	inventory inven ON fil.film_id = inven.film_id
+LEFT JOIN 
+	rental rent ON inven.inventory_id = rent.inventory_id
+LEFT JOIN 
+	payment pay ON rent.rental_id = pay.rental_id
+LEFT JOIN  
+	film_category fil_cate ON fil_cate.film_id = fil.film_id 
+LEFT JOIN  
+	category cate ON cate.category_id = fil_cate.category_id 
+WHERE 
+	pay.amount IS NOT NULL 
+GROUP BY 
+	fil.title, category, rating
+ORDER BY 
+	total_revenue ASC
+LIMIT 10;
+```
+
+Jadi, 10 film yang menghasilkan keuntungan terendah sebagai berikut:
+
+![image](https://github.com/user-attachments/assets/2ef42bb3-b57e-4dea-b2bb-a81af74e6548)
+
+
+
+
+
 
 
 
