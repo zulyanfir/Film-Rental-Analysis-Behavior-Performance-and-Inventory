@@ -49,8 +49,6 @@ GROUP BY
 ORDER BY total_rentals DESC;
 ```
 
-*To answer the question, it is necessary to pull the customer id, customer name, and email data from the customer table as well as the data on the number of movies rented by aggregating the rental id from the rental table. the two tables are joined with the LEFT JOIN function which means the customer table is the reference. The rental id aggregation is grouped into the customer id table to find out the number of movie rentals from a customer id. The order is arranged from the customer who has the most number of rentals.*
-
 So, with the syntax above, we can find out the names of renters as follows:
 
 ![image](https://github.com/user-attachments/assets/2309cc38-082e-473e-b3bf-9cffbd3256db)
@@ -79,8 +77,6 @@ GROUP BY
 ORDER BY total_rentals DESC;
 ```
 
-*To answer the question above, retrieve the country data from the country table and aggregate the rental id from the rental table through other tables with the LEFT JOIN function so that the country table is the reference. After that, I grouped the country column and sorted it based on the aggregation column in descending order.*
-
 So, with the syntax above, we can find out the names of the countries and the number of movie rentals as follows:
 
 ![image](https://github.com/user-attachments/assets/1acc045d-62aa-494d-b3aa-b67eab31f8c8)
@@ -104,8 +100,6 @@ GROUP BY
 	category, fil.rating
 ORDER BY category;
 ```
-
-*To answer the question above, it is necessary to retrieve category name data from the category table, rating from the movie table, and aggregate movie id from the movie table. Join the category and movie tables using LEFT JOIN through the movie_category table. To find out the number per category and rating using grouping to the category and rating columns sorted alphabetically in the category column*
 
 So, with the syntax above, the number of movies based on category and rating can be found as follows:
 
@@ -135,8 +129,6 @@ ORDER BY
 	total_rentals DESC
 LIMIT 10;
 ```
-
-*To answer the question above, it is necessary to retrieve movie title data from the movie table, category name from the category table, and aggregate the rental id from the rental table through the inventory table, and movie_category using LEFT JOIN. Then grouping the aggregation into the title and category columns to find out the number of renters of each movie title and sorted from the highest number of renters.*
 
 So, the 10 movie titles with the most renters are as follows:
 
@@ -196,11 +188,11 @@ ORDER BY
 LIMIT 10;
 ```
 
-*Untuk menjawab pertanyaan di atas, diperlukan mengambil data judul dari tabel film dan mengaggregasikan data amount dari tabel payment melalui tabel inventory dan rental dengan LEFT JOIN. Kemudian hasil aggregasi digrouping ke kolom judul dan diurutkan berdasarkan revenue dari yang terbesar.*
-
-Jadi, 10 film yang menghasilkan keuntungan tertinggi sebagai berikut:
+So, the top 10 highest-grossing movies are as follows:
 
 ![image](https://github.com/user-attachments/assets/c0f0befb-57ca-4127-af8e-fa1d4ae47f41)
+
+*The movie that made the highest profit was Telegraph Voyage in the PG-rated music category, which earned a profit of 231.73. In addition, there were 9 other movies that earned high profits such as Sci-Fi, Sports, Drama, Comedy, Foreign, and Documentary themed movies.*
 
 
 ```SQL
@@ -230,9 +222,106 @@ ORDER BY
 LIMIT 10;
 ```
 
-Jadi, 10 film yang menghasilkan keuntungan terendah sebagai berikut:
+So, the 10 movies that made the lowest profits are as follows:
 
 ![image](https://github.com/user-attachments/assets/2ef42bb3-b57e-4dea-b2bb-a81af74e6548)
+
+*New category movie titled Oklahoma Jumanji with PG rating got the lowest profit of 5.94 and there are 9 other movies categorized as Horror, Comedy, Documentary, Music, Classics, Sci-Fi, and also Drama.*
+
+### How does the number of rentals of each movie compare to the revenue generated?
+```SQL
+SELECT 
+	fil.title, 
+	COUNT(rent.rental_id) AS total_rentals, 
+	SUM(pay.amount) AS total_revenue
+FROM 
+	film fil
+LEFT JOIN 
+	inventory inven ON fil.film_id = inven.film_id
+LEFT JOIN 
+	rental rent ON inven.inventory_id = rent.inventory_id
+LEFT JOIN 
+	payment pay ON rent.rental_id = pay.rental_id
+GROUP BY 
+	fil.title
+ORDER BY
+	total_rentals DESC;
+```
+
+![image](https://github.com/user-attachments/assets/e9e74bcc-77a5-4953-a208-2911b64a0642)
+
+### Are movies with certain ratings or in certain categories rented more often or not?
+```SQL
+SELECT 
+	fil.rating, 
+	cate.name AS category,
+	COUNT(rent.rental_id) AS total_rentals
+FROM 
+	film fil
+LEFT JOIN 
+	film_category fil_cate ON fil.film_id = fil_cate.film_id
+LEFT JOIN 
+	category cate ON fil_cate.category_id = cate.category_id
+LEFT JOIN 
+	inventory inven ON fil.film_id = inven.film_id
+LEFT JOIN 	
+	rental rent ON inven.inventory_id = rent.inventory_id
+GROUP BY 
+	fil.rating, cate.name
+ORDER BY 
+	total_rentals DESC;
+----------------------------------------------------------------
+SELECT 
+	fil.rating, 
+	COUNT(rent.rental_id) AS total_rentals
+FROM 
+	film fil
+LEFT JOIN 
+	film_category fil_cate ON fil.film_id = fil_cate.film_id
+LEFT JOIN 
+	inventory inven ON fil.film_id = inven.film_id
+LEFT JOIN 	
+	rental rent ON inven.inventory_id = rent.inventory_id
+GROUP BY 
+	fil.rating
+ORDER BY 
+	total_rentals DESC;
+-----------------------------------------------------------------
+SELECT 
+	cate.name AS category,
+	COUNT(rent.rental_id) AS total_rentals
+FROM 
+	film fil
+LEFT JOIN 
+	film_category fil_cate ON fil.film_id = fil_cate.film_id
+LEFT JOIN 
+	category cate ON fil_cate.category_id = cate.category_id
+LEFT JOIN 
+	inventory inven ON fil.film_id = inven.film_id
+LEFT JOIN 	
+	rental rent ON inven.inventory_id = rent.inventory_id
+GROUP BY 
+	cate.name
+ORDER BY 
+	total_rentals DESC;
+```
+
+So, movies with a certain rating or category are rented as follows:
+
+![image](https://github.com/user-attachments/assets/5fdf2b6b-f073-4224-83f5-bfe6e33b2cad)
+![image](https://github.com/user-attachments/assets/0202fa0c-a93a-46cb-bc73-9c68e4911f84)
+![image](https://github.com/user-attachments/assets/37d9203e-aff8-48f2-af99-d57a46c90339)
+
+*bubuu* 
+
+---------------------------------------------------------------------------------------------------------------------------------------
+## Return Inventory Management
+### Film apakah yang paling sering terlambat dikembalikan?
+### Bagaimana perbandingan jumlah penyewaan setiap film dengan frekuensi keterlambatan?
+### apakah kategori dan rating film tertentu lebih rentan terhadap keterlambatan pengembalian?
+
+
+
 
 
 
