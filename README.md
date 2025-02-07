@@ -312,13 +312,143 @@ So, movies with a certain rating or category are rented as follows:
 ![image](https://github.com/user-attachments/assets/0202fa0c-a93a-46cb-bc73-9c68e4911f84)
 ![image](https://github.com/user-attachments/assets/37d9203e-aff8-48f2-af99-d57a46c90339)
 
-*bubuu* 
+*Berdasarkan kategorinya, film yang paling sering disewa adalah film dengan kategori Sport yaitu berjumlah 1.179 film. Berdasarkan ratingnya, film yang paling sering disewa adalah film dengan rating PG-13 sebanyak 3.585 film. Sedangkan Berdasarkan keduanya film yang paling sering disewa adalah film yang berkategori Music dengan rating NC-17 yaitu sebanyak 375*
 
 ---------------------------------------------------------------------------------------------------------------------------------------
 ## Return Inventory Management
+
 ### Film apakah yang paling sering terlambat dikembalikan?
+```SQL
+SELECT 
+	fil.title, 
+	COUNT(rent.rental_id) AS late_returns
+FROM 
+	film fil
+LEFT JOIN 
+	inventory inven ON fil.film_id = inven.film_id
+LEFT JOIN 
+	rental rent ON inven.inventory_id = rent.inventory_id
+WHERE 
+	rent.return_date > DATE_ADD(rent.rental_date, INTERVAL fil.rental_duration DAY)
+GROUP BY 
+	fil.title
+ORDER BY 
+	late_returns DESC;
+ ```
+Jadi film yang paling sering terlambat dikembalikan yaitu;
+
+![image](https://github.com/user-attachments/assets/fe130c30-e680-4655-8fc0-8c72f9580604)
+
+Film yang paling sering terlambat dikembalikan yaitu **Butterfly Chocolat**, **Grit Clockwork**, dan **Rocketeer Mother** dengan frekuensi sebanyak 27 kali keterlambatan. 
+
 ### Bagaimana perbandingan jumlah penyewaan setiap film dengan frekuensi keterlambatan?
+```SQL
+SELECT 
+	title,
+	total_rentals,
+	late_returns,
+	(late_returns / total_rentals) AS ratio
+FROM
+	(SELECT 
+		fil.title, 
+		COUNT(rent.rental_id) AS total_rentals,
+	    SUM(
+	    	CASE 
+		    	WHEN rent.return_date > DATE_ADD(rent.rental_date, INTERVAL fil.rental_duration DAY) THEN 1 
+		    	ELSE 0 
+		    END) AS late_returns
+	FROM 
+		film fil
+	LEFT JOIN 
+		inventory inven ON fil.film_id = inven.film_id
+	LEFT JOIN 
+		rental rent ON inven.inventory_id = rent.inventory_id
+	GROUP BY 
+		fil.title) AS subquery
+ORDER BY  
+	ratio DESC;
+```
+Perbandingan antara jumlah pinjaman dan jumlah keterlambatan sebagai berikut:
+
+![image](https://github.com/user-attachments/assets/61a76f43-2637-435d-a4d2-e7411efe6968)
+
+Film Run Pacific menjadi film dengan ratio tertinggi yaitu 10 film yang disewa semuanya terlambat dikembalikan. Perlu ada penyelidikan lebih lanjut faktor yang mendasari keterlambatan dalam pengembalian film-film tersebut.
+
 ### apakah kategori dan rating film tertentu lebih rentan terhadap keterlambatan pengembalian?
+```SQL
+SELECT 
+	cate.name AS category, 
+	fil.rating, 
+	COUNT(rent.rental_id) AS late_returns
+FROM 
+	film fil
+LEFT JOIN 
+	film_category fil_cate ON fil.film_id = fil_cate.film_id
+LEFT JOIN 
+	category cate ON fil_cate.category_id = cate.category_id
+LEFT JOIN 
+	inventory inven ON fil.film_id = inven.film_id
+LEFT JOIN 
+	rental rent ON inven.inventory_id = rent.inventory_id
+WHERE 
+	rent.return_date > DATE_ADD(rent.rental_date, 
+	INTERVAL fil.rental_duration DAY)
+GROUP BY 
+	cate.name, fil.rating
+ORDER BY 
+	late_returns DESC;
+
+
+SELECT 
+	cate.name AS category, 
+	COUNT(rent.rental_id) AS late_returns
+FROM 
+	film fil
+LEFT JOIN 
+	film_category fil_cate ON fil.film_id = fil_cate.film_id
+LEFT JOIN 
+	category cate ON fil_cate.category_id = cate.category_id
+LEFT JOIN 
+	inventory inven ON fil.film_id = inven.film_id
+LEFT JOIN 
+	rental rent ON inven.inventory_id = rent.inventory_id
+WHERE 
+	rent.return_date > DATE_ADD(rent.rental_date, 
+	INTERVAL fil.rental_duration DAY)
+GROUP BY 
+	cate.name
+ORDER BY 
+	late_returns DESC;
+
+
+SELECT 
+	fil.rating, 
+	COUNT(rent.rental_id) AS late_returns
+FROM 
+	film fil
+LEFT JOIN 
+	film_category fil_cate ON fil.film_id = fil_cate.film_id
+LEFT JOIN 
+	category cate ON fil_cate.category_id = cate.category_id
+LEFT JOIN 
+	inventory inven ON fil.film_id = inven.film_id
+LEFT JOIN 
+	rental rent ON inven.inventory_id = rent.inventory_id
+WHERE 
+	rent.return_date > DATE_ADD(rent.rental_date, 
+	INTERVAL fil.rental_duration DAY)
+GROUP BY 
+	fil.rating
+ORDER BY 
+	late_returns DESC;
+```
+Jadi film dengan rating atau kategori yang sering terlambat dikembalikan adalah:
+
+![image](https://github.com/user-attachments/assets/c0126645-85ab-4e42-89d0-6f3db57db08c)
+![image](https://github.com/user-attachments/assets/f6411a56-8023-498a-87c1-3210b112a0a2)
+![image](https://github.com/user-attachments/assets/0c605af2-d9a3-402f-9a0f-35230d2152f4)
+
+
 
 
 
