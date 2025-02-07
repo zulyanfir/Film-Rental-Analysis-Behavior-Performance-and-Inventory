@@ -312,12 +312,12 @@ So, movies with a certain rating or category are rented as follows:
 ![image](https://github.com/user-attachments/assets/0202fa0c-a93a-46cb-bc73-9c68e4911f84)
 ![image](https://github.com/user-attachments/assets/37d9203e-aff8-48f2-af99-d57a46c90339)
 
-*Berdasarkan kategorinya, film yang paling sering disewa adalah film dengan kategori Sport yaitu berjumlah 1.179 film. Berdasarkan ratingnya, film yang paling sering disewa adalah film dengan rating PG-13 sebanyak 3.585 film. Sedangkan Berdasarkan keduanya film yang paling sering disewa adalah film yang berkategori Music dengan rating NC-17 yaitu sebanyak 375*
+*Based on the category, the most rented movies are movies with the Sport category, which amounted to 1,179 movies. Based on the rating, the most rented movie is a movie with a PG-13 rating of 3,585 movies. Meanwhile, based on both, the most rented movies are movies categorized as Music with NC-17 rating, which is 375 movies.*
 
 ---------------------------------------------------------------------------------------------------------------------------------------
 ## Return Inventory Management
 
-### Film apakah yang paling sering terlambat dikembalikan?
+### Which movie is most often returned late?
 ```SQL
 SELECT 
 	fil.title, 
@@ -335,13 +335,13 @@ GROUP BY
 ORDER BY 
 	late_returns DESC;
  ```
-Jadi film yang paling sering terlambat dikembalikan yaitu;
+So the most frequently returned movies are:
 
 ![image](https://github.com/user-attachments/assets/fe130c30-e680-4655-8fc0-8c72f9580604)
 
-Film yang paling sering terlambat dikembalikan yaitu **Butterfly Chocolat**, **Grit Clockwork**, dan **Rocketeer Mother** dengan frekuensi sebanyak 27 kali keterlambatan. 
+*The most frequently returned movies are **Butterfly Chocolat**, **Grit Clockwork**, and **Rocketeer Mother** with a frequency of 27 delays.*
 
-### Bagaimana perbandingan jumlah penyewaan setiap film dengan frekuensi keterlambatan?
+### How does the rental amount of each movie compare with the frequency of delays?
 ```SQL
 SELECT 
 	title,
@@ -368,13 +368,13 @@ FROM
 ORDER BY  
 	ratio DESC;
 ```
-Perbandingan antara jumlah pinjaman dan jumlah keterlambatan sebagai berikut:
+The comparison between the loan amount and the overdue amount is as follows:
 
 ![image](https://github.com/user-attachments/assets/61a76f43-2637-435d-a4d2-e7411efe6968)
 
-Film Run Pacific menjadi film dengan ratio tertinggi yaitu 10 film yang disewa semuanya terlambat dikembalikan. Perlu ada penyelidikan lebih lanjut faktor yang mendasari keterlambatan dalam pengembalian film-film tersebut.
+*Run Pacific was the movie with the highest ratio of 10 movies rented, all of which were returned late. There needs to be further investigation into the underlying factors for the delay in the return of these movies.*
 
-### apakah kategori dan rating film tertentu lebih rentan terhadap keterlambatan pengembalian?
+### Are certain movie categories and ratings more prone to late returns?
 ```SQL
 SELECT 
 	cate.name AS category, 
@@ -397,8 +397,7 @@ GROUP BY
 	cate.name, fil.rating
 ORDER BY 
 	late_returns DESC;
-
-
+-----------------------------------------------------------------
 SELECT 
 	cate.name AS category, 
 	COUNT(rent.rental_id) AS late_returns
@@ -419,8 +418,7 @@ GROUP BY
 	cate.name
 ORDER BY 
 	late_returns DESC;
-
-
+----------------------------------------------------------------
 SELECT 
 	fil.rating, 
 	COUNT(rent.rental_id) AS late_returns
@@ -442,11 +440,16 @@ GROUP BY
 ORDER BY 
 	late_returns DESC;
 ```
-Jadi film dengan rating atau kategori yang sering terlambat dikembalikan adalah:
+
+So the movies with ratings or categories that are often returned late are:
 
 ![image](https://github.com/user-attachments/assets/c0126645-85ab-4e42-89d0-6f3db57db08c)
 ![image](https://github.com/user-attachments/assets/f6411a56-8023-498a-87c1-3210b112a0a2)
 ![image](https://github.com/user-attachments/assets/0c605af2-d9a3-402f-9a0f-35230d2152f4)
+
+*Based on the category, films that are often returned late are films categorized as Sports, as many as 648 films. Based on the rating, the movies that are often returned late are movies with a PG-13 rating, which is 1,814 movies. And based on both, the movies that are often late are the drama category with a PG-13 rating.*
+
+
 
 
 
